@@ -1,0 +1,67 @@
+body {
+    background-color: #E0E0E0;
+}
+
+form {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    justify-content: center;
+    max-width: 400px;
+    margin: 40px auto 40px auto;
+    gap: 5px;
+}
+
+label {
+    font-weight: bold;
+    font-family: sans-serif;
+    font-size: 15px;
+}
+
+.horizontal {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    gap: 5px;
+}
+
+form [type="text"], form [type="email"], select {
+    padding: 8px 5px;
+    text-align: center;
+}
+
+form [type="text"], form [type="email"]{
+    width: calc(100% - 10px);
+}
+
+form [type="submit"] {
+    font-family: sans-serif;
+    font-weight: bold;
+    background-color: #505050;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    margin: 10px 0 0 0;
+    color: white;
+}
+
+form [type="submit"]:hover {
+    background-color: #606060;
+}
+
+form [type="submit"]:active {
+    background-color: #656565;
+}
+
+form [type="submit"]:disabled {
+    background-color: #505050;
+    opacity: 0.7;
+}
+
+p {
+    padding: 10px;
+    border: solid 2px red;
+    margin: 2px;
+    background-color: white;
+}
