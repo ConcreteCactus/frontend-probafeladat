@@ -24,6 +24,7 @@ class RegisterPage extends React.Component {
             agreeErrorStatus: 1,
             responseData: undefined,
             responseErrors: undefined,
+            isWaitingForResponse: false,
         };
 
 
@@ -91,6 +92,9 @@ class RegisterPage extends React.Component {
         });
 
         if(this.isEverythingValid()){
+            this.setState({
+                isWaitingForResponse: true,
+            });
             this.sendHttpRequest(this.constructHttpRequestPayload());
         }
     }
@@ -108,12 +112,15 @@ class RegisterPage extends React.Component {
          && this.leaveRegisterPage
           ) {
             setTimeout(this.leaveRegisterPage, 1000);
+        } else {
+            this.setState({
+                isWaitingForResponse: false,
+            });
         }
     }
 
     render() {
 
-        console.log(this.state);
         return (
             <form onSubmit={this.formSubmit}
                   noValidate
@@ -143,6 +150,7 @@ class RegisterPage extends React.Component {
                                   ["A névnek betűkből és szóközökből kell állnia."]
                               }
                 />
+                <div className="horizontal">
                 <label htmlFor="name">Elfogadom a játékszabályokat.</label>
                 <input type="checkbox"
                        name="name"
@@ -150,6 +158,7 @@ class RegisterPage extends React.Component {
                        onChange={this.agreeChange}
                        checked={this.state.agreeToRules}
                 />
+                </div>
                 <ErrorPrinter errorStatus={this.state.agreeErrorStatus}
                               doShowErrors={this.state.isShowingErrors}
                               errorMessages={
@@ -160,6 +169,7 @@ class RegisterPage extends React.Component {
                        id="submit"
                        name="submit"
                        value="Regisztrálok"
+                       disabled={this.state.isWaitingForResponse}
                 />
                 <ResponseDataPrinter dataString={getResponseDataString(this.state.responseData)} />
                 <ResponseErrorPrinter errorMessages={getResponseErrorMessages(this.state.responseErrors)} />

@@ -37,6 +37,7 @@ class CodeSubmit extends React.Component {
             minuteErrorStatus: 1,
             responseError: undefined,
             responseDate: undefined,
+            isWaitingForResponse: false,
         };
 
         this.emailChange      = this.emailChange.bind(this);
@@ -141,9 +142,7 @@ class CodeSubmit extends React.Component {
     }
 
     formSubmit(event) {
-
         event.preventDefault();
-
         this.setState({
             isShowingErrors: true,
             responseErrors: undefined,
@@ -151,6 +150,9 @@ class CodeSubmit extends React.Component {
         });
 
         if(this.isEverythingValid()){
+            this.setState({
+                isWaitingForResponse: true,
+            });
             this.sendHttpRequest(this.constructHttpRequestPayload());
         }
     }
@@ -169,6 +171,10 @@ class CodeSubmit extends React.Component {
                 let reqEmail = this.state.email;
                 this.goToRegisterPage(reqPayload, reqEmail);
             }, 3000);
+        } else {
+            this.setState({
+                isWaitingForResponse: false,
+            });
         }
         this.setState({
             responseErrors: resp["errors"],
@@ -206,10 +212,26 @@ class CodeSubmit extends React.Component {
                                 ["A kód az angol abc betűiből és számokból állhat, és mindig nyolcjegyű."]
                               }
                 />
-                <MonthDayOptions firstMonth={2}
-                                 lastMonth={3}
-                                 onChange={this.monthDayChange}
-                                 value={stringifyMonthDay(this.state.month, this.state.day)}
+                <div className="horizontal">
+                    <MonthDayOptions firstMonth={2}
+                                     lastMonth={3}
+                                     onChange={this.monthDayChange}
+                                     value={stringifyMonthDay(this.state.month, this.state.day)}
+                    />
+                    <HourOptions forDate={this.constructDate()}
+                                 onChange={this.hourChange}
+                                 value={this.state.hours}
+                    />
+                    <MinuteOptions forDate={this.constructDate()}
+                                   onChange={this.minuteChange}
+                                   value={this.state.minutes}
+                    />
+                </div>
+                <ErrorPrinter errorStatus={this.state.hourErrorStatus}
+                              doShowErrors={this.state.isShowingErrors}
+                              errorMessages={
+                                ["Kérem, órának 0 és 23 közötti értéket adjon meg. A megadott időpont nem lehet az aktuális dátumnál későbbi."]
+                              }
                 />
                 <ErrorPrinter errorStatus={this.state.monthDayErrorStatus}
                               doShowErrors={this.state.isShowingErrors}
@@ -219,31 +241,19 @@ class CodeSubmit extends React.Component {
                                 ]
                               }
                 />
-                <HourOptions forDate={this.constructDate()}
-                             onChange={this.hourChange}
-                             value={this.state.hours}
-                />
-                <ErrorPrinter errorStatus={this.state.hourErrorStatus}
-                              doShowErrors={this.state.isShowingErrors}
-                              errorMessages={
-                                ["Kérem 0 és 23 közötti értéket adjon meg. A megadott időpont nem lehet az aktuális dátumnál későbbi."]
-                              } />
-                <MinuteOptions forDate={this.constructDate()}
-                               onChange={this.minuteChange}
-                               value={this.state.minutes}
-                />
                 <ErrorPrinter errorStatus={this.state.minuteErrorStatus}
                               doShowErrors={this.state.isShowingErrors}
                               errorMessages={
-                                ["Kérem 0 és 59 közötti értéket adjon meg. A megadott időpont nem lehet az aktuális dátumnál későbbi."]
+                                ["Kérem, percnek 0 és 59 közötti értéket adjon meg. A megadott időpont nem lehet az aktuális dátumnál későbbi."]
                               } />
-                <ResponseDataPrinter dataString={getResponseDataString(this.state.responseData)} />
-                <ResponseErrorPrinter errorMessages={getResponseErrorMessages(this.state.responseErrors)} />
                 <input type="submit"
                        name="submit"
                        id="submit"
                        value="Kódfeltöltés"
+                       disabled={this.state.isWaitingForResponse}
                 />
+                <ResponseDataPrinter dataString={getResponseDataString(this.state.responseData)} />
+                <ResponseErrorPrinter errorMessages={getResponseErrorMessages(this.state.responseErrors)} />
             </form>
         );
     }
@@ -316,7 +326,7 @@ function MonthDayOptions(props) {
 
     return (
         <>
-            <label htmlFor="monthDay">Nap</label>
+            <label htmlFor="monthDay">Nap:</label>
             <select id="monthDay" name="monthDay" value={props.value} onChange={props.onChange}>
                 {possibleDates}
             </select>
