@@ -118,57 +118,49 @@ class RegisterPage extends React.Component {
             <form onSubmit={this.formSubmit}
                   noValidate
             >
-                <div>
-                    <label htmlFor="email">E-Mail cím:</label>
-                    <input type="email"
-                           name="email"
-                           id="email"
-                           onChange={this.emailChange}
-                           value={this.state.email}
-                           readOnly={this.state.isEmailReadonly}
-                    />
-                </div>
+                <label htmlFor="email">E-Mail cím:</label>
+                <input type="email"
+                       name="email"
+                       id="email"
+                       onChange={this.emailChange}
+                       value={this.state.email}
+                       readOnly={this.state.isEmailReadonly}
+                />
                 <ErrorPrinter errorStatus={this.state.emailErrorStatus}
                               doShowErrors={this.state.isShowingErrors}
                               errorMessages={["Ez nem egy valid email."]}
                 />
-                <div>
-                    <label htmlFor="name">Név:</label>
-                    <input type="text"
-                           name="name"
-                           id="name"
-                           onChange={this.nameChange}
-                           value={this.state.name}
-                    />
-                </div>
+                <label htmlFor="name">Név:</label>
+                <input type="text"
+                       name="name"
+                       id="name"
+                       onChange={this.nameChange}
+                       value={this.state.name}
+                />
                 <ErrorPrinter errorStatus={this.state.nameErrorStatus}
                               doShowErrors={this.state.isShowingErrors}
                               errorMessages={
                                   ["A névnek betűkből és szóközökből kell állnia."]
                               }
                 />
-                <div>
-                    <label htmlFor="name">Elfogadom a játékszabályokat.</label>
-                    <input type="checkbox"
-                           name="name"
-                           id="name"
-                           onChange={this.agreeChange}
-                           checked={this.state.agreeToRules}
-                    />
-                </div>
+                <label htmlFor="name">Elfogadom a játékszabályokat.</label>
+                <input type="checkbox"
+                       name="name"
+                       id="name"
+                       onChange={this.agreeChange}
+                       checked={this.state.agreeToRules}
+                />
                 <ErrorPrinter errorStatus={this.state.agreeErrorStatus}
                               doShowErrors={this.state.isShowingErrors}
                               errorMessages={
                                   ["Ahhoz, hogy lehessen regisztrálni, el kell fogadni a játékszabályokat."]
                               }
                 />
-                <div>
-                    <input type="submit"
-                           id="submit"
-                           name="submit"
-                           value="Regisztrálok"
-                    />
-                </div>
+                <input type="submit"
+                       id="submit"
+                       name="submit"
+                       value="Regisztrálok"
+                />
                 <ResponseDataPrinter dataString={getResponseDataString(this.state.responseData)} />
                 <ResponseErrorPrinter errorMessages={getResponseErrorMessages(this.state.responseErrors)} />
             </form>

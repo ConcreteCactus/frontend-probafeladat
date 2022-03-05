@@ -181,29 +181,25 @@ class CodeSubmit extends React.Component {
             <form onSubmit={this.formSubmit}
                   noValidate
             >
-                <div>
-                    <label htmlFor="email">Email cím:</label>
-                    <input type="email" 
-                           id="email"
-                           name="email"
-                           onChange={this.emailChange}
-                           value={this.state.email}
-                           required
-                    />
-                </div>
+                <label htmlFor="email">Email cím:</label>
+                <input type="email" 
+                       id="email"
+                       name="email"
+                       onChange={this.emailChange}
+                       value={this.state.email}
+                       required
+                />
                 <ErrorPrinter errorStatus={this.state.emailErrorStatus}
                               doShowErrors={this.state.isShowingErrors}
                               errorMessages={["Ez nem egy valid email."]} />
-                <div>
-                    <label htmlFor="code">Kód:</label>
-                    <input type="text" 
-                           id="code"
-                           name="code"
-                           onChange={this.codeChange}
-                           value={this.state.code}
-                           required
-                    />
-                </div>
+                <label htmlFor="code">Kód:</label>
+                <input type="text" 
+                       id="code"
+                       name="code"
+                       onChange={this.codeChange}
+                       value={this.state.code}
+                       required
+                />
                 <ErrorPrinter errorStatus={this.state.codeErrorStatus}
                               doShowErrors={this.state.isShowingErrors}
                               errorMessages={
@@ -236,7 +232,6 @@ class CodeSubmit extends React.Component {
                                onChange={this.minuteChange}
                                value={this.state.minutes}
                 />
-                <div>
                 <ErrorPrinter errorStatus={this.state.minuteErrorStatus}
                               doShowErrors={this.state.isShowingErrors}
                               errorMessages={
@@ -249,7 +244,6 @@ class CodeSubmit extends React.Component {
                        id="submit"
                        value="Kódfeltöltés"
                 />
-                </div>
             </form>
         );
     }
@@ -268,17 +262,17 @@ function MinuteOptions(props) {
     }
 
     return (
-        <div>
-        <label htmlFor="minute">Perc:</label>
-        <select id="minute"
-                name="minute"
-                value={props.value}
-                onChange={props.onChange}
-                required
-        >
-        {possibleMinutes}
-        </select>
-        </div>
+        <>
+            <label htmlFor="minute">Perc:</label>
+            <select id="minute"
+                    name="minute"
+                    value={props.value}
+                    onChange={props.onChange}
+                    required
+            >
+            {possibleMinutes}
+            </select>
+        </>
     );
 }
 
@@ -296,12 +290,12 @@ function HourOptions(props) {
     }
 
     return (
-        <div>
-        <label htmlFor="hour">Óra:</label>
-        <select id="hour" name="hour" value={props.value} onChange={props.onChange}>
-            {possibleHours}
-        </select>
-        </div>
+        <>
+            <label htmlFor="hour">Óra:</label>
+            <select id="hour" name="hour" value={props.value} onChange={props.onChange}>
+                {possibleHours}
+            </select>
+        </>
     );
 }
 
@@ -321,12 +315,12 @@ function MonthDayOptions(props) {
     }
 
     return (
-        <div>
-        <label htmlFor="monthDay">Nap</label>
-        <select id="monthDay" name="monthDay" value={props.value} onChange={props.onChange}>
-            {possibleDates}
-        </select>
-        </div>
+        <>
+            <label htmlFor="monthDay">Nap</label>
+            <select id="monthDay" name="monthDay" value={props.value} onChange={props.onChange}>
+                {possibleDates}
+            </select>
+        </>
     );
 }
 

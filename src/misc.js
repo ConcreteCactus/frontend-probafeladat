@@ -100,13 +100,13 @@ const isAgreeValid = (checked) => checked ? 0 : 1;
 
 function ErrorPrinter(props) {
     return props.doShowErrors && props.errorStatus > 0
-    ? (<div><p>{props.errorMessages[props.errorStatus-1]}</p></div>)
-    : (<div></div>);
+    ? (<p>{props.errorMessages[props.errorStatus-1]}</p>)
+    : (<></>);
 }
 
 function ResponseDataPrinter(props){
     if(props.dataString) { return (<div><p>{props.dataString}</p></div>); }
-    else { return (<div></div>); }
+    else { return (<></>); }
 }
 
 function ResponseErrorPrinter(props) {
