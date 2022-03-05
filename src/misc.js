@@ -1,3 +1,5 @@
+// Miscellanious function definitions (used by both CodeSubmit and RegisterPage)
+
 const monthNames    = ["Január", "Február", "Március", "Április", "Május", "Június", "Július", "Augusztus", "Szeptember", "Október", "November", "December"];
 const monthDayCount = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 const emailRegex    = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/
@@ -35,6 +37,7 @@ const stringifyMonthDay = (month, day) => {
     return monthNames[month-1] + " " + day.toString() + ".";
 }
 
+// For the /code/upload request payload
 const stringifyDate = (d) => (
       ""
     + d.getFullYear().toString().padStart(4, '0') + "-"
@@ -73,10 +76,12 @@ const getResponseErrorString = (errorCode) => {
     }
 };
 
+// Maps an array of errors to the human readable error texts
 const getResponseErrorMessages = (responseErrors) => (
     responseErrors ? responseErrors.map(err => getResponseErrorString(err["code"])) : []
 );
 
+// Heaps of validation functions
 
 const isEmailValid = (email) => emailRegex.test(email) ? 0 : 1;
 const isCodeValid  = (code) => codeRegex.test(code) ? 0 : 1;
@@ -98,6 +103,8 @@ const isMinuteValid = (minute) => 0 <= minute && minute <= 59 ? 0 : 1
 const isNameValid = (name) => nameRegex.test(name) ? 0 : 1;
 const isAgreeValid = (checked) => checked ? 0 : 1;
 
+// Smaller components
+
 function ErrorPrinter(props) {
     return props.doShowErrors && props.errorStatus > 0
     ? (<p>{props.errorMessages[props.errorStatus-1]}</p>)
@@ -105,7 +112,7 @@ function ErrorPrinter(props) {
 }
 
 function ResponseDataPrinter(props){
-    if(props.dataString) { return (<div><p>{props.dataString}</p></div>); }
+    if(props.dataString) { return (<div className="success"><p>{props.dataString}</p></div>); }
     else { return (<></>); }
 }
 

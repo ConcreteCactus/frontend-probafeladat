@@ -18,27 +18,28 @@ import  { monthNames
         , ResponseErrorPrinter
         } from './misc'
 
+// This component is responsible for the form for uploading codes
+
 class CodeSubmit extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
+            // Form input states \\
             email: '',
             code: '',
             minutes: -1,
             hours: -1,
             month: 2,
             day: 1,
-            isShowingErrors: false,
-            emailErrorStatus: 1,
-            codeErrorStatus: 1,
-            monthDayErrorStatus: 0,
-            hourErrorStatus: 1,
-            minuteErrorStatus: 1,
+
+            isShowingErrors: false, // Gets set to true on form submit
             responseError: undefined,
-            responseDate: undefined,
-            isWaitingForResponse: false,
+            responseData: undefined,
+            isWaitingForResponse: false, // Controlls wether the submit button is disabled or not
         };
+
+        // Callback functions from child components
 
         this.emailChange      = this.emailChange.bind(this);
         this.codeChange       = this.codeChange.bind(this);
@@ -48,8 +49,12 @@ class CodeSubmit extends React.Component {
         this.formSubmit       = this.formSubmit.bind(this);
         this.handleResponse   = this.handleResponse.bind(this);
 
+        // Callback functions coming from parents
+
         this.goToRegisterPage = props.onRegisterNecessary;
         this.finishedSendingExternalPayload = props.onFinishedSendingExternalPayload;
+
+        // Miscellanious functions that read component state
 
         this.constructDate = () => {
             const hours   = this.state.hours   >= 0 ? this.state.hours   : 0;
@@ -57,12 +62,18 @@ class CodeSubmit extends React.Component {
             return new Date(2022, this.state.month-1, this.state.day, hours, minutes, 0, 0);
         };
 
+        this.emailErrorStatus = () => isEmailValid(this.state.email);
+        this.codeErrorStatus  = () => isCodeValid(this.state.code);
+        this.monthDayErrorStatus = () => isMonthDayValid(this.state.month, this.state.day);
+        this.hourErrorStatus = () => isHourValid(this.state.hours);
+        this.minuteErrorStatus = () => isMinuteValid(this.state.minutes);
+
         this.isEverythingValid = () => (
-               this.state.emailErrorStatus === 0
-            && this.state.codeErrorStatus === 0
-            && this.state.monthDayErrorStatus === 0
-            && this.state.hourErrorStatus === 0
-            && this.state.minuteErrorStatus === 0
+               this.emailErrorStatus() === 0
+            && this.codeErrorStatus() === 0
+            && this.monthDayErrorStatus() === 0
+            && this.hourErrorStatus() === 0
+            && this.minuteErrorStatus() === 0
         );
 
         this.constructHttpRequestPayload = () => (
@@ -81,6 +92,7 @@ class CodeSubmit extends React.Component {
             req.send(payload);
         }
 
+        // Runs if the user is coming from the register page
         if(props.startWithPayload){
             console.log("Sending external payload");
             console.log(props.startWithPayload);
@@ -90,10 +102,11 @@ class CodeSubmit extends React.Component {
 
     }
 
+    // Callback function definitions
+
     emailChange(event) {
         this.setState({
             email: event.target.value,
-            emailErrorStatus: isEmailValid(event.target.value),
         });
         event.preventDefault();
     }
@@ -101,7 +114,6 @@ class CodeSubmit extends React.Component {
     codeChange(event) {
         this.setState({
             code: event.target.value,
-            codeErrorStatus: isCodeValid(event.target.value),
         });
         event.preventDefault();
     }
@@ -111,7 +123,6 @@ class CodeSubmit extends React.Component {
         if(!isNaN(minutesParsed)) {
             this.setState({
                 minutes: minutesParsed,
-                minuteErrorStatus: isMinuteValid(minutesParsed),
             });
         }
         event.preventDefault();
@@ -122,20 +133,17 @@ class CodeSubmit extends React.Component {
         if(!isNaN(hoursParsed)) {
             this.setState({
                 hours: hoursParsed,
-                hourErrorStatus: isHourValid(hoursParsed),
             });
         }
         event.preventDefault();
     }
 
     monthDayChange(event, action) {
-
         let md = parseMonthDay(event.target.value);
         if(md) {
             this.setState({
                 month: md.month,
                 day: md.day,
-                monthDayErrorStatus: isMonthDayValid(md.month, md.day),
             });
         }
         event.preventDefault();
@@ -182,6 +190,8 @@ class CodeSubmit extends React.Component {
         });
     }
 
+    // ------- RENDER ------- \\
+
     render() {
         return (
             <form onSubmit={this.formSubmit}
@@ -195,7 +205,7 @@ class CodeSubmit extends React.Component {
                        value={this.state.email}
                        required
                 />
-                <ErrorPrinter errorStatus={this.state.emailErrorStatus}
+                <ErrorPrinter errorStatus={this.emailErrorStatus()}
                               doShowErrors={this.state.isShowingErrors}
                               errorMessages={["Ez nem egy valid email."]} />
                 <label htmlFor="code">Kód:</label>
@@ -206,7 +216,7 @@ class CodeSubmit extends React.Component {
                        value={this.state.code}
                        required
                 />
-                <ErrorPrinter errorStatus={this.state.codeErrorStatus}
+                <ErrorPrinter errorStatus={this.codeErrorStatus()}
                               doShowErrors={this.state.isShowingErrors}
                               errorMessages={
                                 ["A kód az angol abc betűiből és számokból állhat, és mindig nyolcjegyű."]
@@ -227,13 +237,13 @@ class CodeSubmit extends React.Component {
                                    value={this.state.minutes}
                     />
                 </div>
-                <ErrorPrinter errorStatus={this.state.hourErrorStatus}
+                <ErrorPrinter errorStatus={this.hourErrorStatus()}
                               doShowErrors={this.state.isShowingErrors}
                               errorMessages={
                                 ["Kérem, órának 0 és 23 közötti értéket adjon meg. A megadott időpont nem lehet az aktuális dátumnál későbbi."]
                               }
                 />
-                <ErrorPrinter errorStatus={this.state.monthDayErrorStatus}
+                <ErrorPrinter errorStatus={this.monthDayErrorStatus()}
                               doShowErrors={this.state.isShowingErrors}
                               errorMessages={
                                 [ "Ezt a hónapot nem lehet választani. A megadott időpont nem lehet az aktuális dátumnál későbbi."
@@ -241,7 +251,7 @@ class CodeSubmit extends React.Component {
                                 ]
                               }
                 />
-                <ErrorPrinter errorStatus={this.state.minuteErrorStatus}
+                <ErrorPrinter errorStatus={this.minuteErrorStatus()}
                               doShowErrors={this.state.isShowingErrors}
                               errorMessages={
                                 ["Kérem, percnek 0 és 59 közötti értéket adjon meg. A megadott időpont nem lehet az aktuális dátumnál későbbi."]
@@ -258,6 +268,8 @@ class CodeSubmit extends React.Component {
         );
     }
 }
+
+// Renders the minute dropdown
 
 function MinuteOptions(props) {
 
@@ -286,6 +298,7 @@ function MinuteOptions(props) {
     );
 }
 
+// Renders the hour dropdown
 
 function HourOptions(props) {
 
@@ -308,6 +321,8 @@ function HourOptions(props) {
         </>
     );
 }
+
+// Renders the month-day dropdown
 
 function MonthDayOptions(props) {
 
@@ -333,6 +348,8 @@ function MonthDayOptions(props) {
         </>
     );
 }
+
+// Miscellanius non-state dependant function (specific to the CodeSubmit component)
 
 const getResponseDataString = (data) => {
     if(data){

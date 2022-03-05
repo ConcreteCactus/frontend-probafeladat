@@ -9,24 +9,26 @@ import  { isEmailValid
         , ResponseErrorPrinter
         } from './misc'
 
+// This component is responsible for registering new email addresses
+
 class RegisterPage extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
+            // Form input states \\
             email: props.savedEmail || "",
-            isEmailReadonly: !!props.savedEmail,
             name: "",
             agreeToRules: false,
+
+            isEmailReadonly: !!props.savedEmail,
             isShowingErrors: false,
-            emailErrorStatus: props.savedEmail ? isEmailValid(props.savedEmail) : 1,
-            nameErrorStatus: 1,
-            agreeErrorStatus: 1,
             responseData: undefined,
             responseErrors: undefined,
             isWaitingForResponse: false,
         };
 
+        // Callback functions for child components \\
 
         this.emailChange    = this.emailChange.bind(this);
         this.nameChange     = this.nameChange.bind(this);
@@ -34,13 +36,21 @@ class RegisterPage extends React.Component {
         this.formSubmit     = this.formSubmit.bind(this);
         this.handleResponse = this.handleResponse.bind(this);
 
-        this.isEverythingValid = () => (
-               this.state.emailErrorStatus === 0
-            && this.state.nameErrorStatus === 0
-            && this.state.agreeErrorStatus === 0
-        );
+        // Callback function for parents \\
 
         this.leaveRegisterPage = props.onLeaveRegisterPage;
+
+        // Miscellanious functions that read state \\
+
+        this.emailErrorStatus  = () => isEmailValid(this.state.email);
+        this.nameErrorStatus   = () => isNameValid(this.state.name);
+        this.agreeErrorStatus  = () => isAgreeValid(this.state.agreeToRules);
+
+        this.isEverythingValid = () => (
+               this.emailErrorStatus() === 0
+            && this.nameErrorStatus() === 0
+            && this.agreeErrorStatus() === 0
+        );
 
         this.constructHttpRequestPayload = () => (
             JSON.stringify({
@@ -59,10 +69,11 @@ class RegisterPage extends React.Component {
         }
     }
 
+    // Callback function definitions \\
+
     emailChange(event) {
         this.setState({
             email: event.target.value,
-            emailErrorStatus: isEmailValid(event.target.value),
         });
         event.preventDefault();
     }
@@ -70,7 +81,6 @@ class RegisterPage extends React.Component {
     nameChange(event) {
         this.setState({
             name: event.target.value,
-            nameErrorStatus: isNameValid(event.target.value),
         });
         event.preventDefault();
     }
@@ -78,7 +88,6 @@ class RegisterPage extends React.Component {
     agreeChange(event) {
         this.setState({
             agreeToRules: event.target.checked,
-            agreeErrorStatus: isAgreeValid(event.target.checked),
         });
     }
 
@@ -119,6 +128,8 @@ class RegisterPage extends React.Component {
         }
     }
 
+    // ----- RENDER ----- \\
+
     render() {
 
         return (
@@ -133,7 +144,7 @@ class RegisterPage extends React.Component {
                        value={this.state.email}
                        readOnly={this.state.isEmailReadonly}
                 />
-                <ErrorPrinter errorStatus={this.state.emailErrorStatus}
+                <ErrorPrinter errorStatus={this.emailErrorStatus()}
                               doShowErrors={this.state.isShowingErrors}
                               errorMessages={["Ez nem egy valid email."]}
                 />
@@ -144,7 +155,7 @@ class RegisterPage extends React.Component {
                        onChange={this.nameChange}
                        value={this.state.name}
                 />
-                <ErrorPrinter errorStatus={this.state.nameErrorStatus}
+                <ErrorPrinter errorStatus={this.nameErrorStatus()}
                               doShowErrors={this.state.isShowingErrors}
                               errorMessages={
                                   ["A névnek betűkből és szóközökből kell állnia."]
@@ -159,7 +170,7 @@ class RegisterPage extends React.Component {
                        checked={this.state.agreeToRules}
                 />
                 </div>
-                <ErrorPrinter errorStatus={this.state.agreeErrorStatus}
+                <ErrorPrinter errorStatus={this.agreeErrorStatus()}
                               doShowErrors={this.state.isShowingErrors}
                               errorMessages={
                                   ["Ahhoz, hogy lehessen regisztrálni, el kell fogadni a játékszabályokat."]
@@ -177,6 +188,8 @@ class RegisterPage extends React.Component {
         );
     }
 }
+
+// RegisterPage specific miscellanious function that doesn't read state. \\
 
 const getResponseDataString = (data) => {
     if(data){
